@@ -45,6 +45,8 @@ files = []
 
 if not args['urls']:
     def get_pdf_url(year, period):
+        if datetime.datetime.now().month < 10:
+            year -= 1
         y = year % 100
         return f'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/RASPORED_ISPITA_{period}_{y}{y+1}.pdf'
 

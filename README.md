@@ -1,5 +1,7 @@
 # MK-parser
-Doing God's work
+Parse and pretty-print exam schedules in chronogolical order. Parsed schedules can be found in [schedules](schedules) directory.
+
+**NOTE: Due to inconsistencies in scheduling table (extra dates for some exams), there are situations where the parser cannot possibly know which extra date corresponds to which exam, in which case the whole schedule for that year may be wrong. Use with caution.**
 
 ## Setup:
 Python 3 is required.

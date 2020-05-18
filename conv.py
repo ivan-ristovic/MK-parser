@@ -17,15 +17,25 @@ re_info = re.compile(r'^\(.+\)$')
 
 def find_exam_abbr(exam):
     lds = min(map(lambda e: (Levenshtein.distance(e[0], exam), e[1]), exams))
-    if lds[0] > 5:
+    if lds[0] > 6:
         return exam
-    return lds[1]    
+    return lds[1]
+
+def try_parse_location(info):
+    loc = []
+    if "Јагић" in info or "ЈАГ" in info:
+        loc.append("JAG")
+    if "Н" in info:
+        loc.append("N")
+    if not loc:
+        return info
+    return f'({",".join(loc)})'
 
 def convert(text):
     lines = text.splitlines()
     
     years = ['', 'ПРВА', 'ДРУГА', 'ТРЕЋА', 'ЧЕТВРТА', 'ПЕТА', '']
-    schedule = [ {'exams' : [], 'dates' : []} for y in range(len(years[1:-1])) ]
+    schedule = [ {'exams' : [], 'dates' : []} for y in range(len(years[0:-1])) ]
 
     curr_year = 0
     reading = False
@@ -34,10 +44,10 @@ def convert(text):
         if not line:
             continue
 
-        if line.endswith(':') or line.startswith(years[curr_year]):
+        if line.endswith(':') or line.startswith(years[curr_year]) or line.startswith('-'):
             reading = False
-        
-        if Levenshtein.distance(f'{years[curr_year + 1]} ГОДИНА - информатика', line) < 3:
+
+        if Levenshtein.distance(f'{years[curr_year + 1]} ГОДИНА - информатика', line) < 3 or line.startswith('ПЕТА ГОДИНА - '):
             reading = True
             curr_year += 1
             continue
@@ -54,8 +64,8 @@ def convert(text):
             else:
                 schedule[curr_year]['dates'].append(exam_date)
         else: 
-            if re_info.match(line):
-                schedule[curr_year]['exams'][-1] += f' {line}'
+            if re_info.match(line) or str.islower(line[0]):
+                schedule[curr_year]['exams'][-1] += f' {try_parse_location(line)}'
             else:
                 schedule[curr_year]['exams'].append(find_exam_abbr(line))
     
