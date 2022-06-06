@@ -47,8 +47,7 @@ if not args['urls']:
     def get_pdf_url(year, period):
         if datetime.datetime.now().month < 10:
             year -= 1
-        y = year % 100
-        return f'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/RASPORED_ISPITA_{period}_{y}{y+1}.pdf'
+        return f'http://poincare.matf.bg.ac.rs/~kmiljan/raspored/RASPORED_ISPITA_{period}_{year}.pdf'
 
     for period in ['JAN', 'FEB', 'JUN', 'JUL', 'SEP', 'OKT']:
         files.append(get_pdf_url(args['year'], period))
@@ -63,7 +62,7 @@ for f in files:
         print(f'File exists: {f}')
         overwrite = query_yes_no('Overwrite?', default='no')
     if overwrite:
-        wget.download(f)
+        wget.download(f, out=filename)
     pdfs.append(filename)
 print('Downloaded PDFs.')
 

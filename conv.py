@@ -59,10 +59,12 @@ def convert(text):
         if m:
             exam_date = datetime.datetime.strptime(f"{m.group('date')} {m.group('time')}", "%d.%m.%Y %H.%M")
             exam_date = datetime.datetime.strftime(exam_date, "%Y-%m-%d %H:%M")
-            if line.startswith('ПРАКТИЧНИ'):
+            if line.startswith('ПРАКТИЧНИ') or line.startswith('ПИСМЕНИ'):
                 schedule[curr_year]['dates'][-1] += f' {exam_date}'
             else:
                 schedule[curr_year]['dates'].append(exam_date)
+        elif Levenshtein.distance('По договору', line) < 2:
+            schedule[curr_year]['dates'].append('?')
         else: 
             if re_info.match(line) or str.islower(line[0]):
                 schedule[curr_year]['exams'][-1] += f' {try_parse_location(line)}'
